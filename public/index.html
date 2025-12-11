@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GchatHee</title>
+    <link rel="icon" href="Gchaticon.png" type="image/x-icon"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="container">
+        <div id="login-screen">
+            <div class="logo-area">
+                <img src="LogoGchat.png" alt="Gchat Logo" class="app-logo">
+                <h1>Gchat 1.0.1</h1>
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="username" placeholder="ชื่อเล่น (Username)">
+                <span class="error-text" id="error-username">กรุณาใส่ชื่อ</span>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="roomname" placeholder="ชื่อห้อง">
+                <span class="error-text" id="error-roomname">กรุณาใส่ชื่อห้อง</span>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="roompass" placeholder="รหัสผ่านห้อง (ถ้ามี)">
+                <span class="error-text" id="error-password">รหัสผ่านไม่ถูกต้อง</span>
+            </div>
+            
+            <button onclick="joinRoom()" id="btn-join">เข้าห้องแชท</button>
+        </div>
+
+        <div id="chat-screen" class="hidden">
+            <div class="chat-header">
+                <span id="room-title">Room: ...</span>
+                <div class="header-buttons"> <button class="btn-icon" onclick="toggleSettings()"><i class="fas fa-cog"></i></button>
+                    <button class="btn-icon" onclick="leaveRoom()"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chat-box"></div>
+
+            <div class="chat-input-area">
+                <input type="file" id="file-input" accept="image/png, image/jpeg" style="display:none" onchange="sendImage()">
+                <button class="btn-icon" onclick="document.getElementById('file-input').click()"><i class="far fa-image"></i></button>
+                <button class="btn-icon" onclick="openCodeModal()"><i class="fas fa-code"></i></button>
+
+                <input type="text" id="msg-input" placeholder="พิมพ์ข้อความ...">
+                <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <div id="code-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Send Code</h3>
+                <textarea id="code-area" class="code-input" placeholder="วางโค้ดที่นี่..."></textarea>
+                <div style="text-align: right;">
+                    <button onclick="closeCodeModal()" style="background:#ccc; color:black">ยกเลิก</button>
+                    <button onclick="sendCode()">ส่งโค้ด</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>ตั้งค่าห้อง <i class="fas fa-times" onclick="toggleSettings()" style="float:right; cursor:pointer;"></i></h3>
+                
+                <div class="setting-item">
+                    <span class="setting-label">ห้อง:</span>
+                    <span id="modal-room-name" class="setting-value">...</span>
+                    <i class="fas fa-copy copy-icon" onclick="copyToClipboard('modal-room-name')" title="คัดลอกชื่อห้อง"></i>
+                </div>
+
+                <div class="setting-item">
+                    <span class="setting-label">รหัส:</span>
+                    <span id="modal-room-pass" class="setting-value">...</span>
+                    <i class="fas fa-copy copy-icon" onclick="copyToClipboard('modal-room-pass')" title="คัดลอกรหัส"></i>
+                    
+                    <button id="btn-edit-pass" class="btn-icon-small hidden" onclick="togglePassEdit()">
+                        <i class="fas fa-pen"></i> แก้ไข
+                    </button>
+                </div>
+
+                <div id="edit-pass-area" class="edit-area hidden">
+                    <input type="text" id="new-pass-input" placeholder="ตั้งรหัสใหม่ (ว่าง = สาธารณะ)">
+                    <div class="edit-actions">
+                        <button onclick="savePassword()" class="btn-save">บันทึก</button>
+                        <button onclick="togglePassEdit()" class="btn-cancel">ยกเลิก</button>
+                    </div>
+                    <p style="font-size:10px; color:#888; margin-top:5px;">*เว้นว่างแล้วกดบันทึก เพื่อปลดล็อคเป็นสาธารณะ</p>
+                </div>
+
+                <hr>
+                <h4>สมาชิก (<span id="member-count">0</span>)</h4>
+                <div id="user-list"></div>
+                
+                <div id="host-controls" class="hidden">
+                    <hr>
+                    <button onclick="deleteRoom()" style="background:#dc3545; width:100%">[ลบห้องแชท]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
